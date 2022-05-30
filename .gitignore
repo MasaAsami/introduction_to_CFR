@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
+.Rhistory
 
 # C extensions
 *.so
@@ -100,6 +102,13 @@ celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
+
+# data
+*.csv
+*.xlsx
+*.xlx
+*.zip
+
 
 # Environments
 .env
