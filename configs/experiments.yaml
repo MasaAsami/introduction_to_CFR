@@ -1,0 +1,16 @@
+alpha: 0.5
+epochs: 1000
+gamma: 0.97
+ipm_type: mmd_lin
+lr: 0.001
+outnet_dropout: 0.145
+outnet_hidden_dim: 32
+outnet_num_layers: 3
+repnet_dropout: 0.145
+repnet_hidden_dim: 48
+repnet_num_layers: 3
+repnet_out_dim: 48
+sig: 0.1
+split_outnet: True
+wd: 0.5
+StandardScaler: False

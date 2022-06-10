@@ -1,0 +1,1 @@
+python experiment_run.py -m alpha=0,1,100,10000,100000,1000000 ipm_type="mmd_lin","mmd_rbf" split_outnet=True,False StandardScaler=True,False
