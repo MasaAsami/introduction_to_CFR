@@ -45,6 +45,7 @@ def run_experiment(cfg: DictConfig):
         # パラメータの保存
         log_param("alpha", cfg["alpha"])
         log_param("split_outnet", cfg["split_outnet"])
+        log_param("train_test_random", cfg["random_state"])
 
         (
             dataloader,
@@ -55,27 +56,27 @@ def run_experiment(cfg: DictConfig):
             y_test,
             t_test,
         ) = fetch_sample_data(
-            random_state=0, test_size=0.15, StandardScaler=cfg["StandardScaler"]
+            random_state=cfg["random_state"], test_size=0.25, StandardScaler=cfg["StandardScaler"], data_path=hydra.utils.get_original_cwd() + "/data/sample_data.csv"
         )
         model = CFR(in_dim=8, out_dim=1, cfg=cfg)
-        within_pm, outof_pm, train_mse, ipm_result = model.fit(
+        within_result, outof_result, train_mse, ipm_result = model.fit(
             dataloader, X_train, y_train, t_train, X_test, y_test, t_test, logger
         )
 
         within_ipm = ipm_scores(model, X_train, t_train, sig=0.1)
         outof_ipm = ipm_scores(model, X_test, t_test, sig=0.1)
-        log_param("within_IPM", within_ipm["ipm_lin_before"])
-        log_param("outof_IPM", outof_ipm["ipm_lin_before"])
+        log_param("within_IPM_pre", within_ipm["ipm_lin_before"])
+        log_param("outof_IPM_pre", outof_ipm["ipm_lin_before"])
 
         # metricの保存
-        log_metric("within_ATT", within_pm["ATT"])
-        log_metric("within_ATTerror", np.abs(within_pm["ATT"] - 1676.3426))
-        log_metric("within_RMSE", within_pm["RMSE"])
+        log_metric("within_ATT", within_result["ATT"])
+        log_metric("within_ATTerror", np.abs(within_result["ATT"] - 1676.3426))
+        log_metric("within_RMSE", within_result["RMSE"])
         log_metric("within_IPM", within_ipm["ipm_lin"])
 
-        log_metric("outof_ATT", outof_pm["ATT"])
-        log_metric("outof_ATTerror", np.abs(outof_pm["ATT"] - 1676.3426))
-        log_metric("outof_RMSE", outof_pm["RMSE"])
+        log_metric("outof_ATT", outof_result["ATT"])
+        log_metric("outof_ATTerror", np.abs(outof_result["ATT"] - 1676.3426))
+        log_metric("outof_RMSE", outof_result["RMSE"])
         log_metric("outof_IPM", outof_ipm["ipm_lin"])
 
 

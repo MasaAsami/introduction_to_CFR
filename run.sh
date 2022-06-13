@@ -1,1 +1,1 @@
-python experiment_run.py -m alpha=0,1,100,10000,100000,1000000 ipm_type="mmd_lin","mmd_rbf" split_outnet=True,False StandardScaler=True,False
+python experiment_run.py -m alpha=0,0.1,0.01,0.001,0.0001,1,100,10000,100000,1000000,10000000,100000000,1000000000,10000000000,100000000000 split_outnet=True,False random_state=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20

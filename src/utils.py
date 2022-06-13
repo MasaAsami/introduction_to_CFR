@@ -1,4 +1,5 @@
 import sys
+import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
@@ -36,20 +37,25 @@ def ndarray_to_tensor(x):
         x = torch.tensor(x).float()
         return x
 
-def fetch_sample_data(random_state=0, test_size=0.15, StandardScaler=False):
-    RCT_DATA = "http://www.nber.org/~rdehejia/data/nsw_dw.dta"
-    CPS_DATA = "http://www.nber.org/~rdehejia/data/cps_controls3.dta"  # cps調査で直前に無職だったものに限定
+def fetch_sample_data(random_state=0, test_size=0.15, StandardScaler=False, data_path="data/sample_data.csv"):
+    if os.path.isfile(data_path):
+        df = pd.read_csv(data_path)
+    else:
+        RCT_DATA = "http://www.nber.org/~rdehejia/data/nsw_dw.dta"
+        CPS_DATA = "http://www.nber.org/~rdehejia/data/cps_controls3.dta"  # cps調査で直前に無職だったものに限定
 
-    df = pd.concat(
-        [
-            pd.read_stata(RCT_DATA).query("treat>0"),  # (失業者介入実験データ)nsw data の介入群のみ抽出
-            pd.read_stata(CPS_DATA),  # 別のセンサスデータ
-        ]
-    ).reset_index(drop=True)
+        df = pd.concat(
+            [
+                pd.read_stata(RCT_DATA).query("treat>0"),  # (失業者介入実験データ)nsw data の介入群のみ抽出
+                pd.read_stata(CPS_DATA),  # 別のセンサスデータ
+            ]
+        ).reset_index(drop=True)
 
-    del df["data_id"]
+        del df["data_id"]
 
-    df["treat"] = df["treat"].astype(int)
+        df["treat"] = df["treat"].astype(int)
+        df.to_csv(data_path, index=False)
+
     if StandardScaler:
         features_cols = [col for col in df.columns if col not in ["treat", "re78"]]
         ss = preprocessing.StandardScaler()

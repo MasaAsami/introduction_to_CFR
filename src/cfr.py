@@ -1,4 +1,3 @@
-import math
 import sys
 import numpy as np
 from sklearn.metrics import mean_squared_error
@@ -53,11 +52,11 @@ class Base(nn.Module):
         self,
         dataloader,
         x_train,
-        M_train,
-        Z_train,
+        y_train,
+        t_train,
         x_test,
-        M_test,
-        Z_test,
+        y_test,
+        t_test,
         logger,
     ):
         losses = []
@@ -142,24 +141,24 @@ class Base(nn.Module):
 
             if epoch % 100 == 0:
                 with torch.no_grad():
-                    within_pm = get_score(self, x_train, M_train, Z_train)
-                    outof_pm = get_score(self, x_test, M_test, Z_test)
+                    within_result = get_score(self, x_train, y_train, t_train)
+                    outof_result = get_score(self, x_test, y_test, t_test)
                 logger.debug(
                     "[Epoch: %d] [%.3f, %.3f], [%.3f, %.3f, %.3f], [%.3f, %.3f, %.3f] "
                     % (
                         epoch,
                         epoch_loss,
                         ipm if self.cfg["alpha"] > 0 else -1,
-                        within_pm["RMSE"],
-                        within_pm["ATT"],
-                        within_pm["ATE"],
-                        outof_pm["RMSE"],
-                        outof_pm["ATT"],
-                        outof_pm["ATE"],
+                        within_result["RMSE"],
+                        within_result["ATT"],
+                        within_result["ATE"],
+                        outof_result["RMSE"],
+                        outof_result["ATT"],
+                        outof_result["ATE"],
                     )
                 )
 
-        return within_pm, outof_pm, losses, ipm_result
+        return within_result, outof_result, losses, ipm_result
 
 
 class CFR(Base):
@@ -262,11 +261,11 @@ if __name__ == "__main__":
         "outnet_dropout":0.145, "gamma":0.97, "split_outnet": True
         }
     model = CFR(in_dim=8, out_dim=1, cfg=cfgs)
-    within_pm, outof_pm, train_mse, ipm_result = model.fit(
+    within_result, outof_result, train_mse, ipm_result = model.fit(
         dataloader, X_train, y_train, t_train, X_test, y_test, t_test, logger
     )
-    print(within_pm)
-    print(outof_pm)
+    print(within_result)
+    print(outof_result)
 
     _t_id = np.where((t_train.cpu().detach().numpy() == 1).all(axis=1))[0]
     _c_id = np.where((t_train.cpu().detach().numpy() == 0).all(axis=1))[0]

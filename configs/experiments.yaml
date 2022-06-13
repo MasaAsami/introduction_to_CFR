@@ -1,4 +1,4 @@
-alpha: 0.5
+alpha: 10000000
 epochs: 1000
 gamma: 0.97
 ipm_type: mmd_lin
@@ -14,3 +14,4 @@ sig: 0.1
 split_outnet: True
 wd: 0.5
 StandardScaler: False
+random_state: 0
